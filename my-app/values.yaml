@@ -1,0 +1,10 @@
+image:
+  repository: nginx
+  tag: "1.21"
+
+service:
+  port: 80
+
+appConfig:
+  welcome_message: "Hello from Helm!"
+  environment: "production"
