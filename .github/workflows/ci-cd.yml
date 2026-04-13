@@ -1,0 +1,54 @@
+name: ci-cd
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      REGISTRY_SERVER: ${{ vars.REGISTRY_SERVER }}
+      REGISTRY_USERNAME: ${{ vars.REGISTRY_USERNAME }}
+      IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY }}
+      K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE }}
+      K8S_DEPLOYMENT: ${{ vars.K8S_DEPLOYMENT }}
+      K8S_CONTAINER: ${{ vars.K8S_CONTAINER }}
+      VERIFY_URL: ${{ vars.VERIFY_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
+
+      - name: Login to registry
+        env:
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+        run: echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_SERVER" -u "$REGISTRY_USERNAME" --password-stdin
+
+      - name: Build image
+        run: docker build -t "$IMAGE_REPOSITORY:$IMAGE_TAG" .
+
+      - name: Push image
+        run: docker push "$IMAGE_REPOSITORY:$IMAGE_TAG"
+
+      - name: Write kubeconfig
+        env:
+          KUBE_CONFIG_B64: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          echo "$KUBE_CONFIG_B64" | base64 -d > kubeconfig
+          chmod 600 kubeconfig
+          echo "KUBECONFIG=$PWD/kubeconfig" >> "$GITHUB_ENV"
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl -n "$K8S_NAMESPACE" set image deployment/"$K8S_DEPLOYMENT" \
+            "$K8S_CONTAINER"="$IMAGE_REPOSITORY:$IMAGE_TAG"
+          kubectl -n "$K8S_NAMESPACE" rollout status deployment/"$K8S_DEPLOYMENT" --timeout=120s
+          kubectl -n "$K8S_NAMESPACE" rollout history deployment/"$K8S_DEPLOYMENT"
+
+      - name: Verify
+        run: curl -f "$VERIFY_URL"
