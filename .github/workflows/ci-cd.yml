@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     env:
       REGISTRY_SERVER: ${{ vars.REGISTRY_SERVER }}
@@ -20,6 +20,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        run: echo hello
 
       - name: Set image tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
