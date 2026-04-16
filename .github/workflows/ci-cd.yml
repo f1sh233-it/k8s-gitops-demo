@@ -56,5 +56,13 @@ jobs:
           kubectl -n "$K8S_NAMESPACE" rollout status deployment/"$K8S_DEPLOYMENT" --timeout=120s
           kubectl -n "$K8S_NAMESPACE" rollout history deployment/"$K8S_DEPLOYMENT"
 
+      - name: Debug kubectl env
+        run: |
+          whoami
+          echo "$HOME"
+          ls -l /home/f1sh/.kube/config
+          kubectl --kubeconfig=/home/f1sh/.kube/config config current-context
+          kubectl --kubeconfig=/home/f1sh/.kube/config cluster-info
+
       - name: Verify
         run: curl -f "$VERIFY_URL"
