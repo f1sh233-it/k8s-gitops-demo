@@ -24,6 +24,12 @@ jobs:
       - name: Set image tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
 
+      - name: Debug registry vars
+        run: |
+        echo "REGISTRY_SERVER=$REGISTRY_SERVER"
+        echo "REGISTRY_USERNAME=$REGISTRY_USERNAME"
+        echo "IMAGE_REPOSITORY=$IMAGE_REPOSITORY"
+
       - name: Login to registry
         env:
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
