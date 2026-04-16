@@ -64,5 +64,14 @@ jobs:
           kubectl --kubeconfig=/home/f1sh/.kube/config config current-context
           kubectl --kubeconfig=/home/f1sh/.kube/config cluster-info
 
+      - name: Verify kubeconfig
+        run: |
+          echo "KUBECONFIG=$KUBECONFIG"
+          ls -l "$KUBECONFIG"
+          sed -n '1,40p' "$KUBECONFIG"
+          kubectl --kubeconfig="$KUBECONFIG" config view --minify
+          kubectl --kubeconfig="$KUBECONFIG" config current-context
+          kubectl --kubeconfig="$KUBECONFIG" cluster-info
+
       - name: Verify
         run: curl -f "$VERIFY_URL"
