@@ -51,10 +51,15 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl -n "$K8S_NAMESPACE" set image deployment/"$K8S_DEPLOYMENT" \
+          kubectl --kubeconfig=/home/f1sh/.kube/config -n "$K8S_NAMESPACE" \
+            set image deployment/"$K8S_DEPLOYMENT" \
             "$K8S_CONTAINER"="$IMAGE_REPOSITORY:$IMAGE_TAG"
-          kubectl -n "$K8S_NAMESPACE" rollout status deployment/"$K8S_DEPLOYMENT" --timeout=120s
-          kubectl -n "$K8S_NAMESPACE" rollout history deployment/"$K8S_DEPLOYMENT"
+
+          kubectl --kubeconfig=/home/f1sh/.kube/config -n "$K8S_NAMESPACE" \
+            rollout status deployment/"$K8S_DEPLOYMENT" --timeout=120s
+
+          kubectl --kubeconfig=/home/f1sh/.kube/config -n "$K8S_NAMESPACE" \
+            rollout history deployment/"$K8S_DEPLOYMENT"
 
       - name: Debug kubectl env
         run: |
