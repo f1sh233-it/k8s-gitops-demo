@@ -16,6 +16,7 @@ jobs:
       K8S_DEPLOYMENT: ${{ vars.K8S_DEPLOYMENT }}
       K8S_CONTAINER: ${{ vars.K8S_CONTAINER }}
       VERIFY_URL: ${{ vars.VERIFY_URL }}
+      VERIFY_HOST: ${{ vars.VERIFY_HOST }}
 
     steps:
       - name: Checkout
@@ -32,6 +33,7 @@ jobs:
           echo "K8S_DEPLOYMENT=$K8S_DEPLOYMENT"
           echo "K8S_CONTAINER=$K8S_CONTAINER"
           echo "VERIFY_URL=$VERIFY_URL"
+          echo "VERIFY_HOST=$VERIFY_HOST"
           echo "IMAGE_TAG=$IMAGE_TAG"
 
       - name: Login to Docker Hub
