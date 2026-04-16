@@ -78,5 +78,19 @@ jobs:
           kubectl --kubeconfig="$KUBECONFIG" config current-context
           kubectl --kubeconfig="$KUBECONFIG" cluster-info
 
-      - name: Verify
-        run: curl -f "$VERIFY_URL"
+      - name: Verify kubectl
+        run: |
+          kubectl --kubeconfig=/home/f1sh/.kube/config config current-context
+          kubectl --kubeconfig=/home/f1sh/.kube/config cluster-info
+
+      - name: Deploy
+        run: |
+          kubectl --kubeconfig=/home/f1sh/.kube/config -n "$K8S_NAMESPACE" \
+            set image deployment/"$K8S_DEPLOYMENT" \
+            "$K8S_CONTAINER"="$IMAGE_REPOSITORY:$IMAGE_TAG"
+      
+          kubectl --kubeconfig=/home/f1sh/.kube/config -n "$K8S_NAMESPACE" \
+            rollout status deployment/"$K8S_DEPLOYMENT" --timeout=300s
+      
+            - name: Verify
+              run: curl -f "$VERIFY_URL"
