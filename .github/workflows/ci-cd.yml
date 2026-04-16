@@ -26,9 +26,9 @@ jobs:
 
       - name: Debug registry vars
         run: |
-        echo "REGISTRY_SERVER=$REGISTRY_SERVER"
-        echo "REGISTRY_USERNAME=$REGISTRY_USERNAME"
-        echo "IMAGE_REPOSITORY=$IMAGE_REPOSITORY"
+          echo "REGISTRY_SERVER=$REGISTRY_SERVER"
+          echo "REGISTRY_USERNAME=$REGISTRY_USERNAME"
+          echo "IMAGE_REPOSITORY=$IMAGE_REPOSITORY"
 
       - name: Login to registry
         env:
