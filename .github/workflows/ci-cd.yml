@@ -69,4 +69,5 @@ jobs:
             rollout history deployment/"$K8S_DEPLOYMENT"
 
       - name: Verify service
-        run: curl -f -H "Host: $VERIFY_HOST" "$VERIFY_URL"
+        run: |
+          curl -f -H "Host: $VERIFY_HOST" "$VERIFY_URL"
